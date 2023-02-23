@@ -16,7 +16,7 @@ var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).
 
 builder.Services.AddMongo()
     .AddMongoRepository<Item>("items")
-    .AddMassTransitWithRabbitMq()
+    .AddMassTransitWithMessageBroker(builder.Configuration)
     .AddJwtBearerAuthentication();
 
 builder.Services.AddAuthorization(opt => {
