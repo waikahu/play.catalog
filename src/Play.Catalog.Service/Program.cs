@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Play.Catalog.Service;
 using Play.Catalog.Service.Entities;
+using Play.Common.HealthChecks;
 using Play.Common.Identity;
 using Play.Common.MassTransit;
 using Play.Common.MongoDB;
@@ -41,6 +42,8 @@ builder.Services.AddControllers(opt =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks().AddMongoDb();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -60,5 +63,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapPlayEconomyHealthChecks();
 
 app.Run();
