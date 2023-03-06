@@ -1,19 +1,17 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Play.Catalog.Service;
 using Play.Catalog.Service.Entities;
+using Play.Common.Configuration;
 using Play.Common.HealthChecks;
 using Play.Common.Identity;
 using Play.Common.MassTransit;
 using Play.Common.MongoDB;
-using Play.Common.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+builder.Host.ConfigureAzureKeyVault();
 
 builder.Services.AddMongo()
     .AddMongoRepository<Item>("items")
