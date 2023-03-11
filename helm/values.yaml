@@ -9,8 +9,8 @@ envVariables:
 
 resources:
   limits:
-    memory: "128Mi"
-    cpu: "150m"
+    memory: "256Mi"
+    cpu: "300m"
 
 container:
   port: 5000
