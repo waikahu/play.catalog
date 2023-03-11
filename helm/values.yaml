@@ -2,7 +2,7 @@ microserviceName: "catalog"
 
 image:
   repository: wbplayeconomy.azurecr.io/play.catalog
-  tag: 1.0.4
+  tag: 1.0.14
 
 envVariables:
   ServiceSettings__Authority: https://wbplayeconomy.eastus.cloudapp.azure.com/identity-svc
