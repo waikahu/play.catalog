@@ -1,8 +1,10 @@
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using Play.Catalog.Service.Entities;
 using Play.Common.HealthChecks;
@@ -69,6 +71,10 @@ namespace Play.Catalog.Service
             services.AddSeqLogging(Configuration)
                     .AddTracing(Configuration)
                     .AddMetrics(Configuration);
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            
+            IdentityModelEventSource.ShowPII = true;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
