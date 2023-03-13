@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-<PropertyGroup>
+  <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <PackageDescription>Common libraries used by Play Economy services.</PackageDescription>
-    <Authors>Wagner Bolfe</Authors>
+    <PackageDescription>Contracts supported by the Catalog microservice.</PackageDescription>
+    <Authors>Julio Casal</Authors>
     <Company>.NET Microservices</Company>
   </PropertyGroup>
 
