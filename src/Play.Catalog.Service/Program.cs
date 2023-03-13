@@ -1,22 +1,66 @@
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Play.Catalog.Service;
+using Play.Catalog.Service.Entities;
 using Play.Common.Configuration;
+using Play.Common.HealthChecks;
+using Play.Common.Identity;
+using Play.Common.MassTransit;
+using Play.Common.MongoDB;
 
-namespace Play.Catalog.Service
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.ConfigureAzureKeyVault();
+
+builder.Services.AddMongo()
+    .AddMongoRepository<Item>("items")
+    .AddMassTransitWithMessageBroker(builder.Configuration)
+    .AddJwtBearerAuthentication();
+
+builder.Services.AddAuthorization(opt => {
+    opt.AddPolicy(Policies.Read, policy => 
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        policy.RequireRole("Admin");
+        policy.RequireClaim("scope", "catalog.readaccess", "catalog.fullaccess");
+    });
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAzureKeyVault()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+    opt.AddPolicy(Policies.Write, policy => 
+    {
+        policy.RequireRole("Admin");
+        policy.RequireClaim("scope", "catalog.writeaccess", "catalog.fullaccess");
+    });
+});
+
+builder.Services.AddControllers(opt => 
+{
+    opt.SuppressAsyncSuffixInActionNames = false;
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddHealthChecks().AddMongoDb();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseCors(opt => {
+        opt.WithOrigins(app.Configuration["AllowedOrigin"])
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapPlayEconomyHealthChecks();
+
+app.Run();
